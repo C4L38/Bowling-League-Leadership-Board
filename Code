@@ -1,0 +1,96 @@
+import { Card, CardContent } from "@/components/ui/card";
+import { Trophy, Flame, Sparkles } from "lucide-react";
+import { motion } from "framer-motion";
+import { useState } from "react";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
+
+const teams = [
+  { rank: 1, name: "NOISY KINGS", w: 6, l: 0, pins: 2607, hgs: 712, hss: 1343 },
+  { rank: 2, name: "PLAYMASTERS", w: 5, l: 1, pins: 2480, hgs: 674, hss: 1331 },
+  { rank: 3, name: "EASTLINE STARS", w: 5, l: 1, pins: 2417, hgs: 617, hss: 1223 },
+  { rank: 4, name: "LOS AMIGOS", w: 5, l: 1, pins: 2379, hgs: 635, hss: 1251 },
+  { rank: 5, name: "INCREDIBOWLS", w: 2, l: 4, pins: 2310, hgs: 641, hss: 1166 },
+  { rank: 6, name: "VMX", w: 1, l: 5, pins: 2011, hgs: 527, hss: 1040 },
+  { rank: 7, name: "4 BAGGERZ", w: 0, l: 6, pins: 2279, hgs: 583, hss: 1162 },
+  { rank: 8, name: "PLAYMASTERS WORRIOR", w: 0, l: 6, pins: 2224, hgs: 590, hss: 1180 },
+];
+
+const players = [
+  { name: "PARTH", game: 207, series: 380, avg: 178.75 },
+  { name: "NIHIL", game: 203, series: 380, avg: 170.0 },
+  { name: "ZAKARIA", game: 203, series: 371, avg: 166.5 },
+  { name: "BRIAN", game: 190, series: 353, avg: 165.0 },
+  { name: "WILLY", game: 189, series: 347, avg: 162.0 },
+];
+
+const AnimatedCard = ({ team }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 50 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.5, delay: team.rank * 0.1 }}
+  >
+    <Card className="bg-gradient-to-br from-blue-900 via-black to-purple-900 text-white shadow-lg border-none">
+      <CardContent className="p-4 grid grid-cols-6 gap-2 items-center">
+        <div className="text-3xl font-bold text-yellow-400">#{team.rank}</div>
+        <div className="col-span-2 text-xl font-semibold">{team.name}</div>
+        <div className="text-center">{team.w}-{team.l}</div>
+        <div className="text-center">{team.hgs}</div>
+        <div className="text-center">{team.hss}</div>
+      </CardContent>
+    </Card>
+  </motion.div>
+);
+
+export default function Leaderboard() {
+  const [darkMode, setDarkMode] = useState(true);
+
+  return (
+    <div className={`p-8 min-h-screen transition-colors duration-500 ${darkMode ? 'bg-black text-white' : 'bg-white text-black'}`}>
+      <div className="text-center mb-10">
+        <h1 className="text-5xl font-bold text-blue-400 tracking-wide">Bowling League Season 6</h1>
+        <h2 className="text-3xl font-semibold text-orange-400 mt-2">🔥 Power Rankings - Week 2 🔥</h2>
+        <p className="text-sm text-gray-400">Updated April 16, 2025</p>
+        <button onClick={() => setDarkMode(!darkMode)} className="mt-4 bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded">
+          Toggle {darkMode ? 'Light' : 'Dark'} Mode
+        </button>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+        {teams.map(team => <AnimatedCard key={team.rank} team={team} />)}
+      </div>
+
+      <div className="mb-16">
+        <h3 className="text-2xl font-bold text-center text-pink-400 mb-6">🌟 Top Individual Stars 🌟</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {players.map((player, i) => (
+            <motion.div
+              key={player.name}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5, delay: i * 0.1 }}
+              className="bg-gradient-to-br from-pink-600 via-black to-purple-800 text-white rounded-xl p-4 shadow-md"
+            >
+              <h4 className="text-xl font-bold">{player.name}</h4>
+              <p>🎯 High Game: {player.game}</p>
+              <p>📦 High Series: {player.series}</p>
+              <p>📊 Avg: {player.avg}</p>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+
+      <div className="mb-16">
+        <h3 className="text-2xl font-bold text-center text-green-400 mb-6">📈 Team Score Breakdown</h3>
+        <ResponsiveContainer width="100%" height={300}>
+          <BarChart data={teams} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+            <XAxis dataKey="name" stroke={darkMode ? '#fff' : '#000'} />
+            <YAxis stroke={darkMode ? '#fff' : '#000'} />
+            <Tooltip contentStyle={{ backgroundColor: darkMode ? '#222' : '#fff', color: darkMode ? '#fff' : '#000' }} />
+            <Bar dataKey="hss" fill="#8884d8" />
+            <Bar dataKey="hgs" fill="#82ca9d" />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+    </div>
+  );
+}
